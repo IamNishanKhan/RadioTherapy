@@ -123,79 +123,6 @@ def reorder_segments(segmentation_node, desired_order):
     
     print("Reordered segments successfully.")
 
-# Function to export original DICOM data as NIfTI with only included structures
-def export_original_nifti(segmentation_node, output_file_path):
-    segmentation = segmentation_node.GetSegmentation()
-    segment_ids = segmentation.GetSegmentIDs()
-    segment_name_to_id = {segmentation.GetSegment(segment_id).GetName(): segment_id for segment_id in segment_ids}
-    
-    # Create a temporary labelmap volume node to get the geometry
-    temp_labelmap_volume_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
-    success = slicer.modules.segmentations.logic().ExportAllSegmentsToLabelmapNode(
-        segmentation_node, temp_labelmap_volume_node, slicer.vtkSegmentation.EXTENT_REFERENCE_GEOMETRY
-    )
-    if not success:
-        slicer.mrmlScene.RemoveNode(temp_labelmap_volume_node)
-        raise RuntimeError("Failed to convert segmentation to labelmap for geometry extraction.")
-    
-    # Get the dimensions and geometry from the temporary labelmap
-    temp_labelmap_array = slicer.util.arrayFromVolume(temp_labelmap_volume_node)
-    labelmap_shape = temp_labelmap_array.shape
-    print(f"Original labelmap shape: {labelmap_shape}")
-    
-    # Initialize the final labelmap array with zeros (background)
-    original_labelmap_array = np.zeros(labelmap_shape, dtype=np.uint8)
-    
-    # Iterate over segments and include only those in included_structures
-    print("\nConstructing original labelmap with only included structures:")
-    for segment_id in segment_ids:
-        segment_name = segmentation.GetSegment(segment_id).GetName()
-        if segment_name not in included_structures:
-            print(f"Excluding segment '{segment_name}' from original NIfTI.")
-            continue
-        try:
-            # Extract the binary labelmap for this segment
-            segment_array = slicer.util.arrayFromSegmentBinaryLabelmap(segmentation_node, segment_id)
-            unique_vals = np.unique(segment_array)
-            print(f"Segment '{segment_name}' binary labelmap unique values: {unique_vals}")
-            
-            # Ensure the segment array matches the labelmap shape
-            if segment_array.shape != labelmap_shape:
-                print(f"Shape mismatch for '{segment_name}': expected {labelmap_shape}, got {segment_array.shape}. Skipping.")
-                continue
-            
-            # Assign a temporary label value (1) to mark presence, we'll reassign later
-            mask = segment_array > 0
-            original_labelmap_array[mask] = 1
-            print(f"Included '{segment_name}' in the original labelmap.")
-            
-        except Exception as e:
-            print(f"Failed to process segment '{segment_name}' for original NIfTI: {e}")
-    
-    # Debug: Check the unique labels in the original labelmap
-    unique_labels = np.unique(original_labelmap_array)
-    print(f"Unique labels in original labelmap (before reassigning): {unique_labels}")
-    
-    # Create a new labelmap volume node for the original labelmap
-    original_labelmap_volume_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
-    
-    # Copy the geometry from the temporary labelmap node
-    original_labelmap_volume_node.Copy(temp_labelmap_volume_node)
-    
-    # Set the array data
-    slicer.util.updateVolumeFromArray(original_labelmap_volume_node, original_labelmap_array)
-    
-    # Save the labelmap as a NIfTI file
-    success = slicer.util.saveNode(original_labelmap_volume_node, output_file_path)
-    if not success:
-        raise RuntimeError(f"Failed to save original labelmap to file: {output_file_path}")
-    
-    print(f"Exported original labelmap to: {output_file_path}")
-    
-    # Clean up temporary nodes
-    slicer.mrmlScene.RemoveNode(temp_labelmap_volume_node)
-    return original_labelmap_volume_node
-
 # Function to export base DICOM images as PNGs for Axial, Coronal, and Sagittal views
 def export_base_images(volume_node, output_dir):
     # Create output directories for Axial, Coronal, and Sagittal views
@@ -584,7 +511,7 @@ def export_to_nifti_and_png():
     reorder_segments(segmentation_node, desired_order)
     
     # Step 4: Define output directory and file paths
-    output_dir = r"file/path"
+    output_dir = r"file/path/to/output/directory"
     os.makedirs(output_dir, exist_ok=True)
     sanitized_name = sanitize_filename(segmentation_node.GetName())
     original_nifti_path = os.path.join(output_dir, f"{sanitized_name}_Original_nifty.nii.gz")
