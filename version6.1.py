@@ -12,7 +12,6 @@ folder_to_output = r"file/path/to/output"
 # Make sure to change this to your desired output directory
 # Note: The path should be a valid directory on your system
 
-
 # Function to extract patient ID from DICOM database
 def extract_patient_id():
     # Step 1: Get the segmentation and volume nodes
