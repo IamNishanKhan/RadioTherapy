@@ -8,9 +8,10 @@ slicer.util.pip_install('opencv-python') # For cv2 (OpenCV)
 ```
 
 # Run This Command
+## Give your folder path before running
 ##  Give your folder path here: ``` path = r"Your\Folder\Path" ```
-## For Path Example: ``` path = r"D:\Research\Radiotherapy" ``` 
-
 ```
 import urllib.request; path = r"Your\Folder\Path"; script_url = "https://raw.githubusercontent.com/IamNishanKhan/RadioTherapy/main/version6.2.py"; script_content = urllib.request.urlopen(script_url).read().decode('utf-8'); modified_script = script_content.replace('folder_to_output = r"file/path/to/output"', f'folder_to_output = r"{path}"'); exec(modified_script)
 ```
+## For Path Example: ``` path = r"D:\Research\Radiotherapy" ``` 
+
