@@ -12,7 +12,6 @@ folder_to_output = r"file/path/to/output"
 # Make sure to change this to your desired output directory
 # Note: The path should be a valid directory on your system
 
-
 # Function to extract patient ID from DICOM database
 def extract_patient_id():
     # Step 1: Get the segmentation and volume nodes
@@ -420,9 +419,9 @@ def reorder_segments(segmentation_node, desired_order):
 # Function to export base DICOM images as PNGs for Axial, Coronal, and Sagittal views
 def export_base_images(volume_node, output_dir, patient_id):
     # Create output directories for Axial, Coronal, and Sagittal views with patient ID
-    axial_dir = os.path.join(output_dir, f"{patient_id}_original_images", f"{patient_id}_axial_base")
-    coronal_dir = os.path.join(output_dir, f"{patient_id}_original_images", f"{patient_id}_coronal_base")
-    sagittal_dir = os.path.join(output_dir, f"{patient_id}_original_images", f"{patient_id}_sagittal_base")
+    axial_dir = os.path.join(output_dir, f"{patient_id}_base", f"{patient_id}_axial_base")
+    coronal_dir = os.path.join(output_dir, f"{patient_id}_base", f"{patient_id}_coronal_base")
+    sagittal_dir = os.path.join(output_dir, f"{patient_id}_base", f"{patient_id}_sagittal_base")
     for dir_path in [axial_dir, coronal_dir, sagittal_dir]:
         os.makedirs(dir_path, exist_ok=True)
     
@@ -564,9 +563,9 @@ def nifti_to_png(nifti_path, output_dir, patient_id):
     print(f"Unique labels in {nifti_path}: {np.unique(img)}")
     
     # Create output directories for Axial, Coronal, and Sagittal views with patient ID
-    axial_dir = os.path.join(output_dir, f"{patient_id}_masks", f"{patient_id}_axial_mask")
-    coronal_dir = os.path.join(output_dir, f"{patient_id}_masks", f"{patient_id}_coronal_mask")
-    sagittal_dir = os.path.join(output_dir, f"{patient_id}_masks", f"{patient_id}_sagittal_mask")
+    axial_dir = os.path.join(output_dir, f"{patient_id}_mask", f"{patient_id}_axial_mask")
+    coronal_dir = os.path.join(output_dir, f"{patient_id}_mask", f"{patient_id}_coronal_mask")
+    sagittal_dir = os.path.join(output_dir, f"{patient_id}_mask", f"{patient_id}_sagittal_mask")
     for dir_path in [axial_dir, coronal_dir, sagittal_dir]:
         os.makedirs(dir_path, exist_ok=True)
     
@@ -641,9 +640,9 @@ def nifti_to_contour_png(nifti_path, output_dir, patient_id, contour_thickness=1
     print(f"Unique labels in {nifti_path} for contours: {np.unique(img)}")
     
     # Create output directories for Axial, Coronal, and Sagittal views with patient ID
-    axial_dir = os.path.join(output_dir, f"{patient_id}_contours", f"{patient_id}_axial_contours")
-    coronal_dir = os.path.join(output_dir, f"{patient_id}_contours", f"{patient_id}_coronal_contours")
-    sagittal_dir = os.path.join(output_dir, f"{patient_id}_contours", f"{patient_id}_sagittal_contours")
+    axial_dir = os.path.join(output_dir, f"{patient_id}_contour", f"{patient_id}_axial_contour")
+    coronal_dir = os.path.join(output_dir, f"{patient_id}_contour", f"{patient_id}_coronal_contour")
+    sagittal_dir = os.path.join(output_dir, f"{patient_id}_contour", f"{patient_id}_sagittal_contour")
     for dir_path in [axial_dir, coronal_dir, sagittal_dir]:
         os.makedirs(dir_path, exist_ok=True)
     
@@ -755,8 +754,8 @@ def count_unique_colors_in_masks(output_dir, patient_id):
     """
     print("\nCounting unique color classes across all mask PNGs...")
     unique_colors = set()
-    for subdir in [f"{patient_id}_mask_axial", f"{patient_id}_mask_coronal", f"{patient_id}_mask_sagittal"]:
-        dir_path = os.path.join(output_dir, f"{patient_id}_masks", subdir)
+    for subdir in [f"{patient_id}_axial_mask", f"{patient_id}_coronal_mask", f"{patient_id}_sagittal_mask"]:
+        dir_path = os.path.join(output_dir, f"{patient_id}_mask", subdir)
         if not os.path.exists(dir_path):
             print(f"Directory {dir_path} does not exist, skipping.")
             continue
