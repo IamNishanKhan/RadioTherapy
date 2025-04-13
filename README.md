@@ -25,6 +25,8 @@ import urllib.request; path = r"Your\Folder\Path"; script_url = "https://raw.git
   
 # Image Guideline
 <div align="center" style="background-color: white; padding: 10px; border-radius: 8px;"> <img src="guide_images/copy_example_1.png" width="800" style="margin: 10px;"/> </div>
+<br>
 
+<br>
 <div align="center" style="background-color: white; padding: 10px; border-radius: 8px;"> <img src="guide_images/copy_example_2.png" width="800" style="margin: 10px;"/> </div>
 </div>
