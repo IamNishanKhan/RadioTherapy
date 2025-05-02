@@ -214,10 +214,8 @@ def export_base_hdr_images():
         slice_data = image_volume[z, :, :]  # Shape: (y, x)
         image = Image.fromarray(slice_data, mode='L')
         image = image.resize((512, 512), Image.LANCZOS)  # Use LANCZOS for smoother resizing
-        image = image.transpose(Image.FLIP_LEFT_RIGHT)  # Flip horizontally
         output_path = os.path.join(axial_dir, f"{patient_id}_{z:03d}.png")
         image.save(output_path)
-        print(f"Saved {output_path}")
 
     # Coronal view: slices along x-axis (y, z planes)
     coronal_volume = image_volume  # Already in (z, y, x)
@@ -229,7 +227,6 @@ def export_base_hdr_images():
         image = image.transpose(Image.FLIP_TOP_BOTTOM)  # Flip vertically (fixed: was base_image)
         output_path = os.path.join(coronal_dir, f"{patient_id}_{x:03d}.png")
         image.save(output_path)
-        print(f"Saved {output_path}")
 
     # Sagittal view: slices along y-axis (x, z planes)
     sagittal_volume = np.transpose(image_volume, (1, 0, 2))  # (z, y, x) -> (y, z, x)
@@ -241,7 +238,6 @@ def export_base_hdr_images():
         image = image.transpose(Image.FLIP_TOP_BOTTOM)  # Flip vertically (fixed: was base_image)
         output_path = os.path.join(sagittal_dir, f"{patient_id}_{y:03d}.png")
         image.save(output_path)
-        print(f"Saved {output_path}")
 
     print("Saved axial, coronal, and sagittal PNGs completed.")
 
@@ -450,7 +446,6 @@ def export_base_images(volume_node, output_dir, patient_id):
         base_image = base_image.resize((512, 512), Image.NEAREST)
         base_image = base_image.transpose(Image.FLIP_TOP_BOTTOM)  # Flip vertically
         base_image.save(os.path.join(coronal_dir, f'{patient_id}_{z:03d}.png'))
-        print(f"Saved coronal base image {os.path.join(coronal_dir, f'{patient_id}_coronal_base_{z:03d}.png')}")
     
     # --- Axial View (right-left, slices along x-axis) ---
     # Axial view shows the y-z plane (back-front, bottom-top) at each x level
@@ -461,9 +456,7 @@ def export_base_images(volume_node, output_dir, patient_id):
         # Convert to PIL Image and resize
         base_image = Image.fromarray(slice, mode='L')
         base_image = base_image.resize((512, 512), Image.NEAREST)
-        image = image.transpose(Image.FLIP_LEFT_RIGHT)  # Flip horizontally
         base_image.save(os.path.join(axial_dir, f'{patient_id}_{x:03d}.png'))
-        print(f"Saved axial base image {os.path.join(axial_dir, f'{patient_id}_axial_base_{x:03d}.png')}")
     
     # --- Sagittal View (front-back, slices along y-axis) ---
     # Sagittal view shows the x-z plane (left-right, bottom-top) at each y level
@@ -476,7 +469,6 @@ def export_base_images(volume_node, output_dir, patient_id):
         base_image = base_image.resize((512, 512), Image.NEAREST)
         base_image = base_image.transpose(Image.FLIP_TOP_BOTTOM)  # Flip vertically
         base_image.save(os.path.join(sagittal_dir, f'{patient_id}_{y:03d}.png'))
-        print(f"Saved sagittal base image {os.path.join(sagittal_dir, f'{patient_id}_sagittal_base_{y:03d}.png')}")
     
     print(f"Converted base images to PNGs in {output_dir}")
 
@@ -585,9 +577,7 @@ def nifti_to_png(nifti_path, output_dir, patient_id):
         colored_image = Image.fromarray(colored_slice)
         colored_image = colored_image.resize((512, 512), Image.NEAREST)
         colored_image = colored_image.rotate(-90, expand=True) # Rotate 90 degrees clockwise
-        image = image.transpose(Image.FLIP_LEFT_RIGHT)  # Flip horizontally
         colored_image.save(os.path.join(axial_dir, f'{patient_id}_{z:03d}.png'))
-        print(f"Saved axial mask-only {os.path.join(axial_dir, f'{patient_id}_axial_mask_{z:03d}.png')}")
     
     # --- Coronal View (right-left, slices along x-axis) ---
     # Coronal view shows the y-z plane (back-front, bottom-top) at each x level
@@ -605,7 +595,6 @@ def nifti_to_png(nifti_path, output_dir, patient_id):
         colored_image = colored_image.resize((512, 512), Image.NEAREST)
         colored_image = colored_image.rotate(90, expand=True) # Rotate 90 degrees counter-clockwise
         colored_image.save(os.path.join(coronal_dir, f'{patient_id}_{x:03d}.png'))
-        print(f"Saved coronal mask-only {os.path.join(coronal_dir, f'{patient_id}_coronal_mask_{x:03d}.png')}")
     
     # --- Sagittal View (front-back, slices along y-axis) ---
     # Sagittal view shows the x-z plane (left-right, bottom-top) at each y level
@@ -623,7 +612,6 @@ def nifti_to_png(nifti_path, output_dir, patient_id):
         colored_image = colored_image.resize((512, 512), Image.NEAREST)
         colored_image = colored_image.rotate(90, expand=True) # Rotate 90 degrees counter-clockwise
         colored_image.save(os.path.join(sagittal_dir, f'{patient_id}_{y:03d}.png'))
-        print(f"Saved sagittal mask-only {os.path.join(sagittal_dir, f'{patient_id}_sagittal_mask_{y:03d}.png')}")
     
     print(f"Converted {nifti_path} to mask PNGs in {output_dir}")
 
@@ -679,9 +667,7 @@ def nifti_to_contour_png(nifti_path, output_dir, patient_id, contour_thickness=1
         contour_image_pil = Image.fromarray(contour_image_rgb)
         contour_image_pil = contour_image_pil.resize((512, 512), Image.NEAREST)
         contour_image_pil = contour_image_pil.rotate(-90, expand=True) # Rotate 90 degrees clockwise
-        image = image.transpose(Image.FLIP_LEFT_RIGHT)  # Flip horizontally
         contour_image_pil.save(os.path.join(axial_dir, f'{patient_id}_{z:03d}.png'))
-        print(f"Saved axial contour {os.path.join(axial_dir, f'{patient_id}_axial_contour_{z:03d}.png')}")
     
     # --- Coronal View (right-left, slices along x-axis) ---
     coronal_img = np.transpose(img, (0, 1, 2))  # (x, y, z)
@@ -712,7 +698,6 @@ def nifti_to_contour_png(nifti_path, output_dir, patient_id, contour_thickness=1
         contour_image_pil = contour_image_pil.resize((512, 512), Image.NEAREST)
         contour_image_pil = contour_image_pil.rotate(90, expand=True) # Rotate 90 degrees counter-clockwise
         contour_image_pil.save(os.path.join(coronal_dir, f'{patient_id}_{x:03d}.png'))
-        print(f"Saved coronal contour {os.path.join(coronal_dir, f'{patient_id}_coronal_contour_{x:03d}.png')}")
     
     # --- Sagittal View (front-back, slices along y-axis) ---
     sagittal_img = np.transpose(img, (1, 0, 2))  # (y, x, z)
@@ -743,7 +728,6 @@ def nifti_to_contour_png(nifti_path, output_dir, patient_id, contour_thickness=1
         contour_image_pil = contour_image_pil.resize((512, 512), Image.NEAREST)
         contour_image_pil = contour_image_pil.rotate(90, expand=True) # Rotate 90 degrees counter-clockwise
         contour_image_pil.save(os.path.join(sagittal_dir, f'{patient_id}_{y:03d}.png'))
-        print(f"Saved sagittal contour {os.path.join(sagittal_dir, f'{patient_id}_sagittal_contour_{y:03d}.png')}")
     
     print(f"Converted {nifti_path} to contour PNGs in {output_dir}")
 
